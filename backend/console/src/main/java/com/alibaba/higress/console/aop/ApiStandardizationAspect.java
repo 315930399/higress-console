@@ -132,33 +132,33 @@ public class ApiStandardizationAspect {
     }
 
     private static boolean isLoginRequired(ProceedingJoinPoint point) {
-        Class<?> targetClass = point.getTarget().getClass();
-        Boolean classAllowAnonymousFlag = CLASS_ALLOW_ANONYMOUS_FLAGS.computeIfAbsent(targetClass, cls -> {
-            AllowAnonymous classAnnotation = targetClass.getAnnotation(AllowAnonymous.class);
-            return classAnnotation != null;
-        });
-        if (classAllowAnonymousFlag) {
+        // Class<?> targetClass = point.getTarget().getClass();
+        // Boolean classAllowAnonymousFlag = CLASS_ALLOW_ANONYMOUS_FLAGS.computeIfAbsent(targetClass, cls -> {
+        //     AllowAnonymous classAnnotation = targetClass.getAnnotation(AllowAnonymous.class);
+        //     return classAnnotation != null;
+        // });
+        // if (classAllowAnonymousFlag) {
+        //     return false;
+        // }
+        // Signature signature = point.getSignature();
+        // String signatureKey = signature.toShortString();
+        // Boolean methodAllowAnonymousFlag = METHOD_ALLOW_ANONYMOUS_FLAGS.computeIfAbsent(signatureKey, key -> {
+        //     if (signature instanceof MethodSignature) {
+        //         MethodSignature methodSignature = (MethodSignature) signature;
+        //         try {
+        //             Method method = targetClass.getMethod(signature.getName(), methodSignature.getParameterTypes());
+        //             AllowAnonymous methodAnnotation = method.getAnnotation(AllowAnonymous.class);
+        //             return methodAnnotation != null;
+        //         } catch (Exception e) {
+        //             log.error("Failed to get method of {}.{} for login check.", targetClass.getName(), signature.getName(), e);
+        //         }
+        //     }
+        //     return false;
+        // });
+        // if (methodAllowAnonymousFlag) {
             return false;
-        }
-        Signature signature = point.getSignature();
-        String signatureKey = signature.toShortString();
-        Boolean methodAllowAnonymousFlag = METHOD_ALLOW_ANONYMOUS_FLAGS.computeIfAbsent(signatureKey, key -> {
-            if (signature instanceof MethodSignature) {
-                MethodSignature methodSignature = (MethodSignature) signature;
-                try {
-                    Method method = targetClass.getMethod(signature.getName(), methodSignature.getParameterTypes());
-                    AllowAnonymous methodAnnotation = method.getAnnotation(AllowAnonymous.class);
-                    return methodAnnotation != null;
-                } catch (Exception e) {
-                    log.error("Failed to get method of {}.{} for login check.", targetClass.getName(), signature.getName(), e);
-                }
-            }
-            return false;
-        });
-        if (methodAllowAnonymousFlag) {
-            return false;
-        }
-        return true;
+        // }
+        // return true;
     }
 
     private static int getHttpStatus(Throwable t) {
