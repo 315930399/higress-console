@@ -12,7 +12,6 @@
  */
 package com.alibaba.higress.console.aop;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -25,7 +24,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.MDC;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -156,7 +154,7 @@ public class ApiStandardizationAspect {
         //     return false;
         // });
         // if (methodAllowAnonymousFlag) {
-            return false;
+        return false;
         // }
         // return true;
     }

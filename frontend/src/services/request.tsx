@@ -32,6 +32,9 @@ request.interceptors.response.use(
     // console.log("response====", response);
     const statusCategory = Math.floor(status / 100);
     if (statusCategory === 2) {
+      if ((config as any)?.__rawResponse) {
+        return Promise.resolve(data);
+      }
       if (data && data.data) {
         return Promise.resolve(data.data);
       }

@@ -1,11 +1,11 @@
 import ServiceWeightTable, { WeightedService } from '@/components/ServiceWeightTable';
 import { OptionItem } from '@/interfaces/common';
-import { Consumer, CredentialType } from '@/interfaces/consumer';
+import { CredentialType } from '@/interfaces/consumer';
 import { DEFAULT_DOMAIN, Domain } from '@/interfaces/domain';
 import { stringToUpstreamService, upstreamServiceToString } from '@/interfaces/route';
 import { HistoryButton } from '@/pages/ai/components/RouteForm/Components';
 import { getGatewayDomains, getGatewayServices } from '@/services';
-import { getConsumers } from '@/services/consumer';
+import ConsumerSelector from '@/pages/route/components/ConsumerSelector';
 import { containsNonAscii, getOfficialSiteLink } from '@/utils';
 import { QuestionCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
@@ -58,16 +58,8 @@ const RouteForm: React.FC = forwardRef((props, ref) => {
     return Promise.resolve();
   };
 
-  const [consumerList, setConsumerList] = useState<Consumer[]>([]);
   const [weightedServices, setWeightedServices] = useState<WeightedService[]>([]);
   const [editMode, setEditMode] = useState(false);
-
-  const consumerResult = useRequest(getConsumers, {
-    onSuccess: (result) => {
-      const consumers = (result || []) as Consumer[];
-      setConsumerList(consumers);
-    },
-  });
 
   useEffect(() => {
     form.resetFields();
@@ -379,22 +371,8 @@ const RouteForm: React.FC = forwardRef((props, ref) => {
               name="authConfig_allowedConsumers"
               noStyle
             >
-              <Select
-                allowClear
-                mode="multiple"
-                placeholder={t('aiRoute.routeForm.label.authConfigList')}
-                style={{ flex: 1 }}
-              >
-                {consumerList.map((item) => (
-                  <Select.Option key={String(item.name)} value={item.name}>{item.name}</Select.Option>
-                ))}
-              </Select>
+              <ConsumerSelector placeholder={t('aiRoute.routeForm.label.authConfigList')} />
             </Form.Item>
-            <Button
-              style={{ marginLeft: 8 }}
-              onClick={() => consumerResult.run()}
-              icon={<RedoOutlined />}
-            />
           </div>
         </Form.Item>
         <Form.Item

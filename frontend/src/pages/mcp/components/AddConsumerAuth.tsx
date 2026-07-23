@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Drawer, Form, Select, Button, message } from 'antd';
+import { Drawer, Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { getConsumers } from '@/services/consumer';
+import ConsumerSelector from '@/pages/route/components/ConsumerSelector';
 import { addMcpConsumers, listMcpConsumers } from '@/services/mcp';
 
 interface AddConsumerAuthProps {
@@ -21,23 +21,8 @@ const AddConsumerAuth: React.FC<AddConsumerAuthProps> = ({
 }) => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const [consumerList, setConsumerList] = useState<Array<{ label: string; value: string }>>([]);
   const [authorizedConsumers, setAuthorizedConsumers] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const fetchConsumerList = async () => {
-    try {
-      const res = await getConsumers();
-      setConsumerList(
-        res.map((item: any) => ({
-          label: item.name,
-          value: item.name,
-        })),
-      );
-    } catch (error) {
-      message.error(t('mcp.detail.fetchConsumerListError'));
-    }
-  };
 
   const fetchAuthorizedConsumers = async () => {
     try {
@@ -51,7 +36,6 @@ const AddConsumerAuth: React.FC<AddConsumerAuthProps> = ({
 
   useEffect(() => {
     if (visible) {
-      fetchConsumerList();
       fetchAuthorizedConsumers();
       form.resetFields();
     }
@@ -80,9 +64,6 @@ const AddConsumerAuth: React.FC<AddConsumerAuthProps> = ({
     onClose();
   };
 
-  // 过滤掉已授权的消费者
-  const availableConsumers = consumerList.filter(consumer => !authorizedConsumers.includes(consumer.value));
-
   return (
     <Drawer
       title={t('mcp.detail.addConsumerAuth')}
@@ -108,13 +89,7 @@ const AddConsumerAuth: React.FC<AddConsumerAuthProps> = ({
           label={t('mcp.detail.consumer')}
           rules={[{ required: true, message: t('mcp.detail.selectConsumer') || '请选择消费者' }]}
         >
-          <Select
-            mode="multiple"
-            placeholder={t('mcp.detail.selectConsumer') || '请选择消费者'}
-            options={availableConsumers}
-            showSearch
-            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-          />
+          <ConsumerSelector placeholder={t('mcp.detail.selectConsumer') || '请选择消费者'} />
         </Form.Item>
       </Form>
     </Drawer>

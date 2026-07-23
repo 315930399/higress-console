@@ -1,0 +1,20 @@
+.trigger {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 4px 11px;
+  min-height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  transition: border-color 0.2s;
+}
+
+.trigger:hover {
+  border-color: #4096ff;
+}
+
+.placeholder {
+  color: #bfbfbf;
+}

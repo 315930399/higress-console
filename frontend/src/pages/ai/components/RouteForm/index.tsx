@@ -1,12 +1,12 @@
 /* eslint-disable max-lines */
-import { Consumer, CredentialType } from '@/interfaces/consumer';
+import { CredentialType } from '@/interfaces/consumer';
 import { DEFAULT_DOMAIN, Domain } from '@/interfaces/domain';
 import { LlmProvider } from '@/interfaces/llm-provider';
 import FactorGroup from '@/pages/route/components/FactorGroup';
 import { getGatewayDomains } from '@/services';
-import { getConsumers } from '@/services/consumer';
+import ConsumerSelector from '@/pages/route/components/ConsumerSelector';
 import { getLlmProviders } from '@/services/llm-provider';
-import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { Button, Checkbox, Empty, Form, Input, InputNumber, Select, Space, Switch, Tooltip } from 'antd';
 import { uniqueId } from "lodash";
@@ -38,14 +38,6 @@ const AiRouteForm: React.FC = forwardRef((props: { value: any }, ref) => {
       setLlmList(llmProviders);
     },
   });
-  const [consumerList, setConsumerList] = useState<Consumer[]>([]);
-  const consumerResult = useRequest(getConsumers, {
-    manual: true,
-    onSuccess: (result) => {
-      const consumers = (result || []) as Consumer[];
-      setConsumerList(consumers);
-    },
-  });
   const [domainList, setDomainList] = useState<Domain[]>([]);
   const domainsResult = useRequest(getGatewayDomains, {
     manual: true,
@@ -58,7 +50,6 @@ const AiRouteForm: React.FC = forwardRef((props: { value: any }, ref) => {
 
   useEffect(() => {
     llmResult.run();
-    consumerResult.run();
     domainsResult.run();
     form.resetFields();
     initForm();
@@ -604,22 +595,8 @@ const AiRouteForm: React.FC = forwardRef((props: { value: any }, ref) => {
             name="authConfig_allowedConsumers"
             noStyle
           >
-            <Select
-              allowClear
-              mode="multiple"
-              placeholder={t('aiRoute.routeForm.label.authConfigList')}
-              style={{ flex: 1 }}
-            >
-              {consumerList.map((item) => (
-                <Select.Option key={String(item.name)} value={item.name}>{item.name}</Select.Option>
-              ))}
-            </Select>
+            <ConsumerSelector placeholder={t('aiRoute.routeForm.label.authConfigList')} />
           </Form.Item>
-          <Button
-            style={{ marginLeft: 8 }}
-            onClick={() => consumerResult.run()}
-            icon={<RedoOutlined />}
-          />
         </div>
       </Form.Item>
 
