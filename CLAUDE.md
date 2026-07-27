@@ -130,3 +130,6 @@ The chart at `helm/` deploys the console along with optional observability stack
 
 - Backend tests use JUnit 5 + Mockito. Tests exist under `sdk/src/test/` covering services (ConsumerServiceTest, AiRouteServiceTest, WasmPluginServiceTest, McpServerServiceTest), models (RouteTest, KeyedRoutePredicateTest), and utilities (StringUtilTest, ValidateUtilTest). The console module has a single smoke test `HigressConsoleApplicationTests`.
 - There is no frontend test suite.
+
+# Checkstyle
+Obey ./backend/style/higress_formatter.xml ruleset.

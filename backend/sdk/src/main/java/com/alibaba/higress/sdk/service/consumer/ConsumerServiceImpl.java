@@ -30,7 +30,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.higress.sdk.exception.BusinessException;
-import com.alibaba.higress.sdk.exception.ResourceConflictException;
 import com.alibaba.higress.sdk.model.CommonPageQuery;
 import com.alibaba.higress.sdk.model.PaginatedResult;
 import com.alibaba.higress.sdk.model.WasmPluginInstance;
@@ -64,7 +63,6 @@ public class ConsumerServiceImpl implements ConsumerService {
 
     @Override
     public Consumer addOrUpdate(Consumer consumer) {
-        boolean isNew = (query(consumer.getName()) == null);
         List<WasmPluginInstance> instancesToUpdate = new ArrayList<>(CREDENTIAL_HANDLERS.size());
         for (CredentialHandler handler : CREDENTIAL_HANDLERS.values()) {
             WasmPluginInstance instance = getGlobalPluginInstance(handler);
@@ -77,9 +75,6 @@ public class ConsumerServiceImpl implements ConsumerService {
             }
         }
         wasmPluginInstanceService.addOrUpdateAll(instancesToUpdate);
-        if (isNew) {
-            addConsumerToAllAllowLists(consumer.getName());
-        }
         return query(consumer.getName());
     }
 
@@ -279,27 +274,6 @@ public class ConsumerServiceImpl implements ConsumerService {
             }
 
             wasmPluginInstanceService.addOrUpdateAll(instancesToSave);
-        }
-    }
-
-    private void addConsumerToAllAllowLists(String consumerName) {
-        List<AllowList> existingAllowLists = listAllowLists();
-        if (CollectionUtils.isEmpty(existingAllowLists)) {
-            return;
-        }
-        for (AllowList allowList : existingAllowLists) {
-            if (CollectionUtils.isEmpty(allowList.getCredentialTypes())) {
-                continue;
-            }
-            AllowList update = AllowList.builder().targets(allowList.getTargets()).authEnabled(null)
-                .credentialTypes(allowList.getCredentialTypes())
-                .consumerNames(Collections.singletonList(consumerName)).build();
-            try {
-                updateAllowList(AllowListOperation.ADD, update);
-            } catch (ResourceConflictException e) {
-                log.warn("Conflict on allow list {}, retrying", allowList.getTargets());
-                updateAllowList(AllowListOperation.ADD, update);
-            }
         }
     }
 
